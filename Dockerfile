@@ -5,15 +5,18 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Install system dependencies required by OpenCV and graphics
-RUN apt-get update && apt-get install -y \
+# Use --no-install-recommends to reduce image size and apt-get clean to fix repository issues
+RUN apt-get update --fix-missing && \
+    apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender-dev \
     libgomp1 \
     libgl1-mesa-glx \
-    libglib2.0-0 \
-    && rm -rf /var/lib/apt/lists/*
+    ca-certificates \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Copy requirements first for better caching
 COPY requirements.txt .
