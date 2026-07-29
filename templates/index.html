@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Sharpness Comparison</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🔍 Image Sharpness Comparison</h1>
+            <p>Compare the sharpness of two images using multiple analysis methods</p>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Image Section -->
+            <div class="image-section">
+                <h2>Image 1</h2>
+                
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea1">
+                    <div class="upload-prompt">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Drag image here or <span class="link">click to upload</span></p>
+                        <input type="file" id="imageInput1" accept="image/*" hidden>
+                    </div>
+                </div>
+
+                <!-- Image Display -->
+                <div class="image-container" id="imageContainer1" style="display: none;">
+                    <canvas id="canvas1" class="image-canvas"></canvas>
+                    <div class="image-info">
+                        <span class="dimension" id="dimension1">Dimensions: -</span>
+                        <span class="region-info" id="regionInfo1">Region: None</span>
+                    </div>
+                </div>
+
+                <!-- Minimap -->
+                <div class="minimap-container" id="minimapContainer1" style="display: none;">
+                    <label>Position Map</label>
+                    <canvas id="minimap1" class="minimap-canvas" width="150" height="150"></canvas>
+                </div>
+
+                <!-- Drawing Tools -->
+                <div class="tools" id="tools1" style="display: none;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="drawMode1" class="draw-toggle">
+                        <span>Draw Region</span>
+                    </label>
+                    <button class="btn-small" id="clearRegion1">Clear Region</button>
+                </div>
+            </div>
+
+            <!-- Right Image Section -->
+            <div class="image-section">
+                <h2>Image 2</h2>
+                
+                <!-- Upload Area -->
+                <div class="upload-area" id="uploadArea2">
+                    <div class="upload-prompt">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Drag image here or <span class="link">click to upload</span></p>
+                        <input type="file" id="imageInput2" accept="image/*" hidden>
+                    </div>
+                </div>
+
+                <!-- Image Display -->
+                <div class="image-container" id="imageContainer2" style="display: none;">
+                    <canvas id="canvas2" class="image-canvas"></canvas>
+                    <div class="image-info">
+                        <span class="dimension" id="dimension2">Dimensions: -</span>
+                        <span class="region-info" id="regionInfo2">Region: None</span>
+                    </div>
+                </div>
+
+                <!-- Minimap -->
+                <div class="minimap-container" id="minimapContainer2" style="display: none;">
+                    <label>Position Map</label>
+                    <canvas id="minimap2" class="minimap-canvas" width="150" height="150"></canvas>
+                </div>
+
+                <!-- Drawing Tools -->
+                <div class="tools" id="tools2" style="display: none;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="drawMode2" class="draw-toggle">
+                        <span>Draw Region</span>
+                    </label>
+                    <button class="btn-small" id="clearRegion2">Clear Region</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Selection with Tabs -->
+        <div class="metrics-section">
+            <h3>📊 Analysis Methods</h3>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="sharpness">🔍 Sharpness</button>
+                <button class="tab-button" data-tab="brightness">☀️ Brightness</button>
+                <button class="tab-button" data-tab="contrast">⚫⚪ Contrast</button>
+                <button class="tab-button" data-tab="noise">📊 Noise</button>
+                <button class="tab-button" data-tab="histogram">📈 Histogram</button>
+            </div>
+            
+            <!-- Tab Contents -->
+            <div class="tab-contents">
+                <!-- Sharpness Tab -->
+                <div class="tab-content active" id="tab-sharpness">
+                    <div class="metrics-grid" id="metricsContainer-sharpness"></div>
+                </div>
+                
+                <!-- Brightness Tab -->
+                <div class="tab-content" id="tab-brightness">
+                    <div class="metrics-grid" id="metricsContainer-brightness"></div>
+                </div>
+                
+                <!-- Contrast Tab -->
+                <div class="tab-content" id="tab-contrast">
+                    <div class="metrics-grid" id="metricsContainer-contrast"></div>
+                </div>
+                
+                <!-- Noise Tab -->
+                <div class="tab-content" id="tab-noise">
+                    <div class="metrics-grid" id="metricsContainer-noise"></div>
+                </div>
+                
+                <!-- Histogram Tab -->
+                <div class="tab-content" id="tab-histogram">
+                    <div class="metrics-grid" id="metricsContainer-histogram"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Button -->
+        <div class="action-section">
+            <button class="btn-compare" id="compareBtn">Compare Images</button>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <h2>Comparison Results</h2>
+            
+            <!-- Winner Badge -->
+            <div class="winner-section" id="winnerSection"></div>
+
+            <!-- Detailed Results -->
+            <div class="results-grid">
+                <!-- Image 1 Results -->
+                <div class="result-card">
+                    <h3>Image 1 Scores</h3>
+                    <div class="scores-list" id="scores1"></div>
+                </div>
+
+                <!-- Image 2 Results -->
+                <div class="result-card">
+                    <h3>Image 2 Scores</h3>
+                    <div class="scores-list" id="scores2"></div>
+                </div>
+            </div>
+
+            <!-- Chart Comparison -->
+            <div class="chart-section">
+                <h3>Visual Comparison</h3>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <!-- RGB Histogram Section -->
+            <div class="histogram-section" id="histogramSection" style="display: none;">
+                <h3>📊 RGB Histogram Analysis</h3>
+                <div class="histogram-grid">
+                    <!-- Image 1 RGB -->
+                    <div class="histogram-card">
+                        <h4>Image 1</h4>
+                        <canvas id="rgbHistogramImage1" class="rgb-histogram-canvas"></canvas>
+                    </div>
+                    
+                    <!-- Image 2 RGB -->
+                    <div class="histogram-card">
+                        <h4>Image 2</h4>
+                        <canvas id="rgbHistogramImage2" class="rgb-histogram-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Messages -->
+        <div class="error-message" id="errorMessage"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
